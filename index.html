@@ -468,8 +468,9 @@
   .psdba-grid--full,.psdba-grid--close{grid-template-columns:1fr !important;}
   .psdba-tabs{flex-direction:column !important; gap:.6rem !important;}
   .psdba-tab{width:100% !important; display:flex !important; align-items:center !important;
-    justify-content:center !important; min-height:52px !important; padding:14px 18px !important;
-    font-size:15px !important; letter-spacing:1px !important;}
+    justify-content:center !important; min-height:58px !important; padding:16px 18px !important;
+    font-size:17px !important; letter-spacing:.8px !important;}
+  .psdba-hint{font-size:15px !important; line-height:1.55 !important; margin-bottom:1.5rem !important;}
 }
 
 /* ---------- THE SLIDER ---------- */
@@ -478,7 +479,7 @@
   position:relative !important; display:block !important; width:100% !important;
   overflow:hidden !important; border-radius:10px !important;
   background:var(--ink) !important; cursor:ew-resize !important;
-  touch-action:none !important; user-select:none !important; -webkit-user-select:none !important;
+  touch-action:pan-y !important; user-select:none !important; -webkit-user-select:none !important;
 }
 .psdba-slider:focus-visible{outline:2px solid var(--gold) !important; outline-offset:3px !important;}
 /* portrait for full face (Instagram-style); native wide ratio for closeups */
@@ -532,6 +533,20 @@
   max-width:680px !important; margin:2.5rem auto 0 !important; text-align:center !important;
   font-size:13px !important; line-height:1.7 !important; color:#8A8178 !important;
 }
+/* Mobile control sizing — kept at the end of the sheet deliberately: these
+   share specificity with the slider rules above, so source order decides. */
+@media (max-width:1000px){
+  .psdba-lab{font-size:14px !important; padding:.5rem .8rem !important; bottom:.9rem !important; letter-spacing:1px !important;}
+  .psdba-lab--before{left:.9rem !important;}
+  .psdba-lab--after{right:.9rem !important;}
+  .psdba-knob{width:54px !important; height:54px !important;}
+  .psdba-knob::before{left:15px !important; border-right-width:8px !important; border-top-width:7px !important; border-bottom-width:7px !important;}
+  .psdba-knob::after{right:15px !important; border-left-width:8px !important; border-top-width:7px !important; border-bottom-width:7px !important;}
+  .psdba-handle{width:3px !important;}
+  .psdba-note{font-size:14px !important;}
+  /* shorter cards so more than one fits on screen — much easier to scroll past */
+  .psdba-grid--full .psdba-slider{aspect-ratio:0.72 !important;}
+}
 @media (prefers-reduced-motion:reduce){
   .psdba *,.psdba *::before,.psdba *::after{transition:none !important; animation:none !important;}
 }
@@ -568,7 +583,7 @@
          and a plain inline style would lose to it, leaving the slider frozen. */
       before.style.setProperty('clip-path','inset(0 '+(100-pos)+'% 0 0)','important');
       handle.style.setProperty('left',pos+'%','important');
-      var w=sl.clientWidth||1, half=21;
+      var w=sl.clientWidth||1, half=(window.innerWidth<=1000?29:21);
       knob.style.setProperty('left',Math.max(half,Math.min(w-half,(pos/100)*w))+'px','important');
       sl.setAttribute('aria-valuenow',Math.round(pos));
       sl.classList.toggle('is-revealing',pos>6);
@@ -577,12 +592,31 @@
       var r=sl.getBoundingClientRect();
       paint(((e.clientX-r.left)/r.width)*100);
     }
+    /* Touch gesture handling: the page must stay scrollable THROUGH the slider.
+       On touch we wait to see which way the finger moves first — a mostly-vertical
+       swipe is left alone so the page scrolls, and only a clearly horizontal drag
+       takes over the gesture. Mouse users get the immediate click-and-drag. */
+    var sx=0, sy=0, decided=false;
     sl.addEventListener('pointerdown',function(e){
-      dragging=true; hinted=true; sl.setPointerCapture(e.pointerId); fromEvent(e); e.preventDefault();
+      sx=e.clientX; sy=e.clientY; decided=false; dragging=false;
+      if(e.pointerType==='mouse'){
+        decided=true; dragging=true; hinted=true;
+        sl.setPointerCapture(e.pointerId); fromEvent(e); e.preventDefault();
+      }
     });
-    sl.addEventListener('pointermove',function(e){ if(dragging) fromEvent(e); });
-    sl.addEventListener('pointerup',function(e){ dragging=false; try{sl.releasePointerCapture(e.pointerId);}catch(x){} });
-    sl.addEventListener('pointercancel',function(){ dragging=false; });
+    sl.addEventListener('pointermove',function(e){
+      if(!decided){
+        var dx=Math.abs(e.clientX-sx), dy=Math.abs(e.clientY-sy);
+        if(dx<8 && dy<8) return;              /* too small to judge yet */
+        decided=true;
+        if(dy>dx){ dragging=false; return; }  /* vertical -> let the page scroll */
+        dragging=true; hinted=true;
+        try{ sl.setPointerCapture(e.pointerId); }catch(x){}
+      }
+      if(dragging){ fromEvent(e); e.preventDefault(); }
+    });
+    sl.addEventListener('pointerup',function(e){ dragging=false; decided=false; try{sl.releasePointerCapture(e.pointerId);}catch(x){} });
+    sl.addEventListener('pointercancel',function(){ dragging=false; decided=false; });
     sl.addEventListener('keydown',function(e){
       var step=e.shiftKey?10:4;
       if(e.key==='ArrowRight'){paint(pos+step);e.preventDefault();hinted=true;}
