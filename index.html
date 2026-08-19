@@ -12,8 +12,6 @@
       <button class="psdba-tab" id="psdba-t-close" role="tab" aria-selected="false" aria-controls="psdba-p-close" type="button"><span class="psdba-t-long">Closeup Before &amp; Afters</span><span class="psdba-t-short">Closeup</span> <b>16</b></button>
     </div>
 
-    <p class="psdba-hint">Each photo shows the <strong>after</strong>. Drag the handle to reveal the before.</p>
-
     <div class="psdba-panel is-on" id="psdba-p-full" role="tabpanel" aria-labelledby="psdba-t-full">
       <div class="psdba-grid psdba-grid--full">
         <div class="psdba-case">
@@ -435,7 +433,7 @@
 .psdba-sec{padding:3.5rem 1.25rem !important; max-width:1560px !important; margin:0 auto !important;}
 
 /* tabs */
-.psdba-tabs{display:flex !important; justify-content:center !important; gap:.5rem !important; margin:0 0 1rem !important; flex-wrap:wrap !important;}
+.psdba-tabs{display:flex !important; justify-content:center !important; gap:.5rem !important; margin:0 0 2rem !important; flex-wrap:wrap !important;}
 .psdba-tab{
   appearance:none !important; cursor:pointer !important; background:transparent !important;
   border:1px solid rgba(204,170,103,.55) !important; border-radius:10px !important;
@@ -450,12 +448,6 @@
 .psdba-t-short{display:none !important;}
 .psdba-panel{display:none !important;}
 .psdba-panel.is-on{display:block !important;}
-
-.psdba-hint{
-  text-align:center !important; font-size:13px !important; letter-spacing:.4px !important;
-  color:#8A8178 !important; margin:0 0 2rem !important;
-}
-.psdba-hint strong{color:var(--ink) !important; font-weight:600 !important;}
 
 /* grid */
 .psdba-grid{display:grid !important; gap:1rem !important;}
@@ -482,7 +474,6 @@
   /* short labels on small screens so the tab stays on one line */
   .psdba-t-long{display:none !important;}
   .psdba-t-short{display:inline !important;}
-  .psdba-hint{font-size:19px !important; line-height:1.5 !important; margin-bottom:1.6rem !important; color:#5F574E !important;}
 }
 
 /* ---------- THE SLIDER ---------- */
@@ -543,7 +534,7 @@
 
 .psdba-note{
   max-width:680px !important; margin:2.5rem auto 0 !important; text-align:center !important;
-  font-size:13px !important; line-height:1.7 !important; color:#8A8178 !important;
+  font-size:14pt !important; line-height:1.7 !important; color:#5F574E !important;
 }
 /* Mobile control sizing — kept at the end of the sheet deliberately: these
    share specificity with the slider rules above, so source order decides. */
@@ -556,7 +547,7 @@
   .psdba-knob::before{left:15px !important; border-right-width:8px !important; border-top-width:7px !important; border-bottom-width:7px !important;}
   .psdba-knob::after{right:15px !important; border-left-width:8px !important; border-top-width:7px !important; border-bottom-width:7px !important;}
   .psdba-handle{width:3px !important;}
-  .psdba-note{font-size:17px !important; line-height:1.65 !important; color:#5F574E !important;}
+  .psdba-note{font-size:14pt !important; line-height:1.65 !important;}
   /* shorter cards so more than one fits on screen — much easier to scroll past.
      0.82 is as tight as these 1:2 source photos go before the top of the head
      starts getting clipped; the nudge to 44% keeps chin and hair both in frame. */
