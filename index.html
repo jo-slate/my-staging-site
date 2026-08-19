@@ -471,10 +471,11 @@
   .psdba-tabs{flex-direction:row !important; flex-wrap:nowrap !important; gap:.55rem !important;}
   .psdba-tab{flex:1 1 0 !important; width:auto !important; min-width:0 !important;
     display:flex !important; align-items:center !important; justify-content:center !important;
-    min-height:54px !important; padding:14px 8px !important;
-    font-size:17px !important; letter-spacing:.2px !important; line-height:1.2 !important;
-    white-space:nowrap !important;}
-  .psdba-tab b{font-size:15px !important; margin-left:.3rem !important;}
+    min-height:76px !important; padding:16px 6px !important;
+    /* scales with viewport so it never overflows on 320px phones */
+    font-size:clamp(18px,5.9vw,23px) !important; letter-spacing:0 !important;
+    line-height:1.15 !important; white-space:nowrap !important;}
+  .psdba-tab b{font-size:clamp(14px,4.4vw,18px) !important; margin-left:.35rem !important;}
   /* short labels on small screens so the tab stays on one line */
   .psdba-t-long{display:none !important;}
   .psdba-t-short{display:inline !important;}
@@ -544,8 +545,8 @@
 /* Mobile control sizing — kept at the end of the sheet deliberately: these
    share specificity with the slider rules above, so source order decides. */
 @media (max-width:1000px){
-  .psdba-lab{font-size:19px !important; padding:.62rem 1.05rem !important; bottom:1rem !important;
-    letter-spacing:.6px !important; border-radius:8px !important;}
+  .psdba-lab{font-size:clamp(22px,7.4vw,30px) !important; padding:.7rem 1.2rem !important;
+    bottom:1.1rem !important; letter-spacing:.4px !important; border-radius:10px !important;}
   .psdba-lab--before{left:1rem !important;}
   .psdba-lab--after{right:1rem !important;}
   .psdba-knob{width:54px !important; height:54px !important;}
@@ -558,6 +559,10 @@
      starts getting clipped; the nudge to 44% keeps chin and hair both in frame. */
   .psdba-grid--full .psdba-slider{aspect-ratio:0.82 !important;}
   .psdba-grid--full .psdba-img{object-position:center 44% !important;}
+  /* more breathing room between stacked cases so they don't read as one strip.
+     Closeups are short and wide, so they need the most separation. */
+  .psdba-grid--full{gap:2.25rem !important;}
+  .psdba-grid--close{gap:2.75rem !important;}
 }
 @media (prefers-reduced-motion:reduce){
   .psdba *,.psdba *::before,.psdba *::after{transition:none !important; animation:none !important;}
@@ -608,18 +613,31 @@
        On touch we wait to see which way the finger moves first — a mostly-vertical
        swipe is left alone so the page scrolls, and only a clearly horizontal drag
        takes over the gesture. Mouse users get the immediate click-and-drag. */
-    var sx=0, sy=0, decided=false;
+    /* `down` gates everything: pointermove also fires on plain hover, so without
+       this a mouse moving across the image would start sliding with no click. */
+    var sx=0, sy=0, decided=false, down=false, pid=null;
+
+    function release(){
+      down=false; decided=false; dragging=false;
+      if(pid!==null){ try{ sl.releasePointerCapture(pid); }catch(x){} pid=null; }
+    }
+
     sl.addEventListener('pointerdown',function(e){
-      sx=e.clientX; sy=e.clientY; decided=false; dragging=false;
+      down=true; pid=e.pointerId; sx=e.clientX; sy=e.clientY;
+      decided=false; dragging=false;
       if(e.pointerType==='mouse'){
+        /* mouse: click-and-drag starts immediately */
         decided=true; dragging=true; hinted=true;
-        sl.setPointerCapture(e.pointerId); fromEvent(e); e.preventDefault();
+        try{ sl.setPointerCapture(e.pointerId); }catch(x){}
+        fromEvent(e); e.preventDefault();
       }
     });
+
     sl.addEventListener('pointermove',function(e){
+      if(!down) return;                       /* hover must never move the slider */
       if(!decided){
         var dx=Math.abs(e.clientX-sx), dy=Math.abs(e.clientY-sy);
-        if(dx<8 && dy<8) return;              /* too small to judge yet */
+        if(dx<8 && dy<8) return;              /* too small to judge intent yet */
         decided=true;
         if(dy>dx){ dragging=false; return; }  /* vertical -> let the page scroll */
         dragging=true; hinted=true;
@@ -627,8 +645,10 @@
       }
       if(dragging){ fromEvent(e); e.preventDefault(); }
     });
-    sl.addEventListener('pointerup',function(e){ dragging=false; decided=false; try{sl.releasePointerCapture(e.pointerId);}catch(x){} });
-    sl.addEventListener('pointercancel',function(){ dragging=false; decided=false; });
+
+    sl.addEventListener('pointerup',release);
+    sl.addEventListener('pointercancel',release);
+    sl.addEventListener('pointerleave',function(){ if(!dragging) release(); });
     sl.addEventListener('keydown',function(e){
       var step=e.shiftKey?10:4;
       if(e.key==='ArrowRight'){paint(pos+step);e.preventDefault();hinted=true;}
