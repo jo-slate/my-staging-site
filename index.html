@@ -10,9 +10,13 @@
      ========================================================== -->
 
 <div class="psdbc">
+ <div class="psdbc-inner">
   <div class="psdbc-head">
-    <span class="psdbc-eyebrow">Befores &amp; Afters</span>
-    <h2 class="psdbc-title">Full Face Transformations</h2>
+    <div class="psdbc-head-text">
+      <h2 class="psdbc-title">Smile Transformations</h2>
+      <p class="psdbc-sub">Explore how our cosmetic dentistry has changed the lives of our patients.</p>
+    </div>
+    <a class="psdbc-cta" href="https://thepsdentalstudio.com/smile-gallery/">View All Before &amp; Afters</a>
   </div>
 
   <div class="psdbc-stage">
@@ -239,7 +243,7 @@
     <span class="psdbc-count" aria-live="polite"></span>
   </div>
 
-  <p class="psdbc-note">Individual results vary. Every treatment plan follows an in-person consultation and clinical exam.</p>
+ </div>
 </div>
 
 <style>
@@ -248,28 +252,47 @@
   --fd:"gravesend-sans","Red Hat Display",sans-serif;
   --fb:"Red Hat Display",sans-serif;
   --gap:16px; --per:4;
+  --bg:#EEEEEB;
   display:block !important; width:100% !important; box-sizing:border-box !important;
   font-family:var(--fb) !important; color:var(--ink) !important;
-  max-width:1560px !important; margin:0 auto !important; padding:3.5rem 1.25rem !important;
+  background:var(--bg) !important;
+  padding:4rem clamp(1.25rem,5vw,80px) !important;
 }
+.psdbc-inner{max-width:1560px !important; margin:0 auto !important;}
 .psdbc *,.psdbc *::before,.psdbc *::after{box-sizing:border-box !important;}
 
-/* head */
-.psdbc-head{text-align:center !important; margin-bottom:2rem !important;}
-.psdbc-eyebrow{
-  display:block !important; font-size:11px !important; font-weight:600 !important;
-  letter-spacing:.18em !important; text-transform:uppercase !important;
-  color:var(--gold) !important; margin-bottom:.7rem !important;
+/* head — text left, CTA right, matching the section this replaces */
+.psdbc-head{
+  display:flex !important; align-items:flex-start !important;
+  justify-content:space-between !important; gap:32px !important;
+  margin-bottom:2rem !important; flex-wrap:wrap !important;
 }
+.psdbc-head-text{flex:1 1 420px !important; min-width:0 !important;}
 .psdbc-title{
   font-family:var(--fd) !important; font-weight:500 !important;
-  font-size:clamp(28px,3.6vw,46px) !important; line-height:1.1 !important;
-  letter-spacing:-1px !important; color:var(--ink) !important; margin:0 !important;
+  font-size:clamp(30px,4vw,52px) !important; line-height:1.08 !important;
+  letter-spacing:-1px !important; text-transform:uppercase !important;
+  color:var(--ink) !important; margin:0 0 .6rem !important;
 }
+.psdbc-sub{
+  font-family:var(--fb) !important; font-size:17px !important; line-height:1.65 !important;
+  color:var(--muted) !important; margin:0 !important; max-width:52ch !important;
+}
+.psdbc-cta{
+  flex:0 0 auto !important; display:inline-flex !important; align-items:center !important;
+  justify-content:center !important; text-decoration:none !important;
+  background:var(--gold) !important; color:var(--white) !important;
+  font-family:var(--fb) !important; font-size:13px !important; font-weight:600 !important;
+  letter-spacing:.10em !important; text-transform:uppercase !important;
+  padding:18px 34px !important; border-radius:10px !important;
+  transition:background .2s ease !important; white-space:nowrap !important;
+}
+.psdbc-cta:hover{background:var(--gold-h) !important; color:var(--white) !important;}
+.psdbc-cta:focus-visible{outline:2px solid var(--ink) !important; outline-offset:3px !important;}
 
-/* stage: arrows flank the viewport */
-.psdbc-stage{display:flex !important; align-items:center !important; gap:12px !important;}
-.psdbc-viewport{flex:1 1 auto !important; overflow:hidden !important; min-width:0 !important;}
+/* stage: arrows sit over the row edges so the photos keep full width */
+.psdbc-stage{position:relative !important;}
+.psdbc-viewport{overflow:hidden !important; min-width:0 !important;}
 .psdbc-track{
   display:flex !important; gap:var(--gap) !important;
   transition:transform .45s cubic-bezier(.4,0,.2,1) !important;
@@ -282,9 +305,11 @@
 
 /* arrows */
 .psdbc-arrow{
-  flex:0 0 auto !important; appearance:none !important; cursor:pointer !important;
-  width:52px !important; height:52px !important; border-radius:50% !important;
-  background:var(--white) !important; border:1px solid rgba(204,170,103,.55) !important;
+  position:absolute !important; top:50% !important; transform:translateY(-50%) !important;
+  z-index:6 !important; appearance:none !important; cursor:pointer !important;
+  width:54px !important; height:54px !important; border-radius:50% !important;
+  background:rgba(255,255,255,.94) !important; border:1px solid rgba(204,170,103,.55) !important;
+  box-shadow:0 3px 14px rgba(20,17,14,.22) !important;
   display:flex !important; align-items:center !important; justify-content:center !important;
   font-family:var(--fd) !important; font-size:30px !important; line-height:1 !important;
   color:var(--ink) !important; padding:0 0 4px 0 !important;
@@ -292,7 +317,9 @@
 }
 .psdbc-arrow:hover:not(:disabled){background:var(--gold) !important; border-color:var(--gold) !important; color:var(--white) !important;}
 .psdbc-arrow:focus-visible{outline:2px solid var(--gold) !important; outline-offset:3px !important;}
-.psdbc-arrow:disabled{opacity:.28 !important; cursor:default !important;}
+.psdbc-arrow:disabled{opacity:0 !important; pointer-events:none !important;}
+.psdbc-arrow--prev{left:-14px !important;}
+.psdbc-arrow--next{right:-14px !important;}
 
 /* the before/after slider itself */
 .psdbc-slider{
@@ -359,11 +386,6 @@
 .psdbc-dot:focus-visible{outline:2px solid var(--gold) !important; outline-offset:3px !important;}
 .psdbc-count{font-size:13px !important; letter-spacing:.06em !important; color:var(--muted) !important;}
 
-.psdbc-note{
-  max-width:36ch !important; margin:2.2rem auto 0 !important; text-align:center !important;
-  font-size:14pt !important; line-height:1.6 !important; color:var(--muted) !important;
-}
-
 /* responsive: items per view */
 @media (max-width:1200px){ .psdbc{--per:3;} }
 @media (max-width:860px){  .psdbc{--per:2; --gap:12px;} }
@@ -372,18 +394,12 @@
   .psdbc-slider{aspect-ratio:0.82 !important;}
   .psdbc-img{object-position:center 44% !important;}
   .psdbc-lab{font-size:12px !important;}
-  .psdbc-note{font-size:14pt !important;}
-  /* Arrows overlay the image instead of flanking it — with one card per view,
-     flanking buttons were stealing ~90px and shrinking the photo. */
-  .psdbc-stage{position:relative !important; gap:0 !important;}
-  .psdbc-arrow{
-    position:absolute !important; top:50% !important; transform:translateY(-50%) !important;
-    z-index:6 !important; width:44px !important; height:44px !important; font-size:26px !important;
-    background:rgba(255,255,255,.92) !important; box-shadow:0 2px 10px rgba(20,17,14,.28) !important;
-  }
-  .psdbc-arrow--prev{left:8px !important;}
-  .psdbc-arrow--next{right:8px !important;}
-  .psdbc-arrow:disabled{opacity:0 !important; pointer-events:none !important;}
+  .psdbc-arrow{width:44px !important; height:44px !important; font-size:26px !important;}
+  .psdbc-arrow--prev{left:6px !important;}
+  .psdbc-arrow--next{right:6px !important;}
+  .psdbc-head{gap:20px !important;}
+  .psdbc-cta{width:100% !important; padding:16px 24px !important;}
+  .psdbc-sub{font-size:16px !important;}
   /* 17 dots is unreadable on a phone — the counter carries position instead */
   .psdbc-dots{display:none !important;}
   .psdbc-count{font-size:15px !important;}
